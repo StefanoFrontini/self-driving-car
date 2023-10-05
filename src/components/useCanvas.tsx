@@ -41,7 +41,7 @@ function useCanvas(canvasWidth: number, canvasHeight: number) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [canvasHeight, canvasWidth]);
 
   return canvasRef;
 }
