@@ -11,7 +11,7 @@ import useCanvas from "./useCanvas";
 // }
 
 function Canvas() {
-  const canvasRef = useCanvas();
+  const canvasRef = useCanvas(200, window.innerHeight);
 
   return <canvas id="canvas" ref={canvasRef}></canvas>;
 }

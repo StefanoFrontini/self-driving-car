@@ -21,7 +21,5 @@ body {
 }
 
 #canvas {
-  width: 20rem;
-  height: 100vh;
   background-color: lightgray;
 }
