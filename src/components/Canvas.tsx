@@ -1,19 +1,13 @@
 import useCanvas from "./useCanvas";
-// import Road from "./lib/road";
-// import Car from "./lib/car";
-
-// interface Props {
-// draw: (ctx: CanvasRenderingContext2D) => void;
-//   objToDraw: {
-//     draw: (ctx: CanvasRenderingContext2D) => void;
-//     update: () => void;
-//   };
-// }
-
 function Canvas() {
-  const canvasRef = useCanvas(200, window.innerHeight);
+  const { carCanvasRef, networkCanvasRef } = useCanvas();
 
-  return <canvas id="canvas" ref={canvasRef}></canvas>;
+  return (
+    <>
+      <canvas id="carCanvas" ref={carCanvasRef}></canvas>
+      <canvas id="networkCanvas" ref={networkCanvasRef}></canvas>
+    </>
+  );
 }
 
 export default Canvas;

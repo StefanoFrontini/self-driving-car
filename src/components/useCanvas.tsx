@@ -1,37 +1,51 @@
 import { useEffect, useRef } from "react";
 import Road from "./lib/road";
 import Car from "./lib/car";
+import Visualizer from "./lib/visualizer";
 
-function useCanvas(canvasWidth: number, canvasHeight: number) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+function useCanvas() {
+  const carCanvasRef = useRef<HTMLCanvasElement>(null);
+  const networkCanvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    const ctx = canvas.getContext("2d");
+    const carCanvas = carCanvasRef.current;
+    const networkCanvas = networkCanvasRef.current;
+    if (!carCanvas) return;
+    if (!networkCanvas) return;
+    carCanvas.width = 200;
+    carCanvas.height = innerHeight;
+    networkCanvas.width = 300;
+    networkCanvas.height = innerHeight;
+    const carCtx = carCanvas.getContext("2d");
+    const networkCtx = networkCanvas.getContext("2d");
     let animationFrameId: number;
-    const road = new Road(canvas.width / 2, canvas.width * 0.9);
-    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "KEYS");
+    const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
+    const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI");
     const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)];
-    console.log("car", car);
-    console.log("traffic", traffic);
 
     function animate() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      if (!carCtx) return;
+      if (!networkCtx) return;
+      carCtx.clearRect(0, 0, carCtx.canvas.width, carCtx.canvas.height);
+      networkCtx.clearRect(
+        0,
+        0,
+        networkCtx.canvas.width,
+        networkCtx.canvas.height
+      );
       for (let i = 0; i < traffic.length; i++) {
         traffic[i].update(road.borders, []);
       }
       car.update(road.borders, traffic);
-      ctx.save();
-      ctx.translate(0, -car.y + ctx.canvas.height * 0.3);
-      road.draw(ctx);
+      carCtx.save();
+      carCtx.translate(0, -car.y + carCtx.canvas.height * 0.3);
+      road.draw(carCtx);
       for (let i = 0; i < traffic.length; i++) {
-        traffic[i].draw(ctx, "red");
+        traffic[i].draw(carCtx, "red");
       }
-      car.draw(ctx, "blue");
-      ctx.restore();
+      car.draw(carCtx, "blue");
+      carCtx.restore();
+
+      Visualizer.drawNetwork(networkCtx, car.brain!);
 
       animationFrameId = requestAnimationFrame(animate);
     }
@@ -41,8 +55,8 @@ function useCanvas(canvasWidth: number, canvasHeight: number) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [canvasHeight, canvasWidth]);
+  }, []);
 
-  return canvasRef;
+  return { carCanvasRef, networkCanvasRef };
 }
 export default useCanvas;

@@ -1,7 +1,7 @@
 import Car from "./car";
 import { getIntersection, lerp } from "./utils";
 
-import type { Point } from "./utils";
+import type { Point, TouchPoint } from "./utils";
 
 class Sensor {
   car: Car;
@@ -9,10 +9,10 @@ class Sensor {
   rayLength: number;
   raySpread: number;
   rays: [Point, Point][] = [];
-  readings: (Point | null)[] = [];
+  readings: (TouchPoint | null)[] = [];
   constructor(car: Car) {
     this.car = car;
-    this.rayCount = 3;
+    this.rayCount = 5;
     this.rayLength = 100;
     this.raySpread = Math.PI / 4;
   }
@@ -28,7 +28,6 @@ class Sensor {
     for (let i = 0; i < this.rays.length; i++) {
       this.readings.push(this.#getReading(this.rays[i], roadBorders, traffic));
     }
-    console.log(this.readings);
   }
   #getReading(
     ray: [Point, Point],
@@ -37,7 +36,7 @@ class Sensor {
       bottomRight: { x: number; y: number }
     ][],
     traffic: Car[]
-  ): Point | null {
+  ): TouchPoint | null {
     const touches = [];
     for (let i = 0; i < roadBorders.length; i++) {
       const touch = getIntersection(
@@ -71,11 +70,12 @@ class Sensor {
       const offsets = touches.map((e) => e.offset);
       const minOffset = Math.min(...offsets);
       const minTouch = touches.find((e) => e.offset === minOffset) ?? null;
-      if (minTouch) {
-        const point: Point = { x: minTouch.x, y: minTouch.y };
-        return point;
-      }
-      return null;
+      return minTouch;
+      // if (minTouch) {
+      //   const point: Point = { x: minTouch.x, y: minTouch.y };
+      //   return point;
+      // }
+      // return null;
     }
   }
   #castRays() {

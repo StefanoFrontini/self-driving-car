@@ -20,6 +20,9 @@ body {
   background: darkgray;
 }
 
-#canvas {
+#carCanvas {
   background-color: lightgray;
+}
+#networkCanvas {
+  background-color: black;
 }
