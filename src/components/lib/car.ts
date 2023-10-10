@@ -47,15 +47,17 @@ class Car {
     this.damaged = this.#assessDamage(roadBorders, traffic);
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
-      if (this.useBrain && this.brain) {
+      if (this.brain) {
         const offsets = this.sensor.readings.map((s) =>
           s === null ? 0 : 1 - s.offset
         );
         const outputs = NeuralNetwork.feedForward(offsets, this.brain);
-        this.controls.forward = outputs[0] === 1;
-        this.controls.left = outputs[1] === 1;
-        this.controls.right = outputs[2] === 1;
-        this.controls.reverse = outputs[3] === 1;
+        if (this.useBrain) {
+          this.controls.forward = outputs[0] === 1;
+          this.controls.left = outputs[1] === 1;
+          this.controls.right = outputs[2] === 1;
+          this.controls.reverse = outputs[3] === 1;
+        }
       }
     }
   }

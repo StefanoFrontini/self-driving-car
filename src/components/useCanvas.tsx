@@ -21,8 +21,9 @@ function useCanvas() {
     const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
     const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI");
     const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)];
+    const time = 0;
 
-    function animate() {
+    function animate(time: number) {
       if (!carCtx) return;
       if (!networkCtx) return;
       carCtx.clearRect(0, 0, carCtx.canvas.width, carCtx.canvas.height);
@@ -45,12 +46,13 @@ function useCanvas() {
       car.draw(carCtx, "blue");
       carCtx.restore();
 
+      networkCtx.lineDashOffset = -time / 50;
       Visualizer.drawNetwork(networkCtx, car.brain!);
 
       animationFrameId = requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(time);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
